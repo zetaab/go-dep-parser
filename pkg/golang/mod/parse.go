@@ -26,7 +26,10 @@ func Parse(r io.Reader) ([]types.Library, error) {
 		return nil, xerrors.Errorf("go.mod parse error: %w", err)
 	}
 
-	skipIndirect := lessThan117(modFileParsed.Go.Version)
+	skipIndirect := false
+	if modFileParsed.Go != nil {
+		skipIndirect = lessThan117(modFileParsed.Go.Version)
+	}
 
 	for _, require := range modFileParsed.Require {
 		// Skip indirect dependencies less than Go 1.17
